@@ -1,26 +1,27 @@
 import {ReactComponent as Map} from './maps/startPage.svg';
-import React, { useState, useMemo, useDeferredValue } from 'react';
-import LocationInfo from './LocationInfo.js';
-import {elements} from './DataBase.js';
+import { useState, useMemo, useDeferredValue, ChangeEvent } from 'react';
+import LocationInfo from './LocationInfo';
+import {elements} from './DataBase';
+import { RoomData } from './types';
 
 
 function SearchRoom(){
 
-    const [searchString, setSearchString] = useState("");
+    const [searchString, setSearchString] = useState<string>("");
 
     // React 18.3 useDeferredValue: More efficient than manual debouncing
     // Defers re-rendering search results while keeping input responsive
     // React automatically optimizes the timing based on device performance
     const deferredSearchString = useDeferredValue(searchString);
 
-    function changeInput(event) {
+    function changeInput(event: ChangeEvent<HTMLInputElement>) {
         setSearchString(event.target.value);
     }
 
     // Memoize search results to prevent unnecessary recalculations
     // Now uses deferredSearchString for better concurrent rendering
     const resultList = useMemo(() => {
-        const matchSearch = (word) => {
+        const matchSearch = (word: string | undefined): boolean => {
             // Validering: Kontrollera att word inte är null eller undefined
             if(!word || deferredSearchString === ""){
                 return false;
@@ -31,12 +32,12 @@ function SearchRoom(){
             return lowerCaseWord.search(lowerCaseSearchString) !== -1;
         };
 
-        const filteredResults = elements.filter(room => matchSearch(room.room)).sort((a,b) => a.room.length - b.room.length);
+        const filteredResults = elements.filter((room: RoomData) => matchSearch(room.room)).sort((a: RoomData, b: RoomData) => a.room.length - b.room.length);
         return filteredResults.slice(0, 5);
     }, [deferredSearchString]);
 
     const hasMoreResults = useMemo(() => {
-        const matchSearch = (word) => {
+        const matchSearch = (word: string | undefined): boolean => {
             // Validering: Kontrollera att word inte är null eller undefined
             if(!word || deferredSearchString === ""){
                 return false;
@@ -47,7 +48,7 @@ function SearchRoom(){
             return lowerCaseWord.search(lowerCaseSearchString) !== -1;
         };
 
-        const filteredResults = elements.filter(room => matchSearch(room.room));
+        const filteredResults = elements.filter((room: RoomData) => matchSearch(room.room));
         return filteredResults.length > 5;
     }, [deferredSearchString]);
 
@@ -69,7 +70,7 @@ return(
         />
         <div role="status" aria-live="polite" style={{ opacity: isSearching ? 0.7 : 1, transition: 'opacity 0.2s' }}>
 
-        {resultList.map((input) => (
+        {resultList.map((input: RoomData) => (
         <LocationInfo key={input.room} data={input}/>
         ))
         }

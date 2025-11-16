@@ -1,24 +1,33 @@
 import React, {useEffect, useState, useRef, useMemo, useCallback, lazy, Suspense, useTransition} from 'react';
 import {useParams} from "react-router-dom";
-import {elements} from './DataBase.js';
+import {elements} from './DataBase';
 import { Link } from "react-router-dom";
-import { BUILDINGS, FLOOR_CODES, MAP_NAMES } from './constants.js';
+import { BUILDINGS, FLOOR_CODES, MAP_NAMES } from './constants';
+import { RoomData, LazySVGComponent, FloorConfig } from './types';
 
 // Keep small icons as regular imports
 import {ReactComponent as Back} from './icons/back.svg';
 
+interface SuspenseErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface SuspenseErrorBoundaryState {
+  hasError: boolean;
+}
+
 // React 18.3: Error boundary component for Suspense fallbacks
-class SuspenseErrorBoundary extends React.Component {
-  constructor(props) {
+class SuspenseErrorBoundary extends React.Component<SuspenseErrorBoundaryProps, SuspenseErrorBoundaryState> {
+  constructor(props: SuspenseErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error: Error): SuspenseErrorBoundaryState {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('SVG loading error:', error, errorInfo);
   }
 
@@ -40,41 +49,41 @@ class SuspenseErrorBoundary extends React.Component {
 
 // Lazy load SVG floor plans for better performance
 // React 18.3: Enhanced error handling for lazy imports
-const Täppan3 = lazy(() => import('./maps/Täppan3.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Täppan3: LazySVGComponent = lazy(() => import('./maps/Täppan3.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Täppan3 map:', err);
   throw err;
 }));
-const Täppan4 = lazy(() => import('./maps/Täppan4.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Täppan4: LazySVGComponent = lazy(() => import('./maps/Täppan4.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Täppan4 map:', err);
   throw err;
 }));
-const Täppan5 = lazy(() => import('./maps/Täppan5.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Täppan5: LazySVGComponent = lazy(() => import('./maps/Täppan5.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Täppan5 map:', err);
   throw err;
 }));
-const Kåkenhus1 = lazy(() => import('./maps/Kåken1.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Kåkenhus1: LazySVGComponent = lazy(() => import('./maps/Kåken1.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Kåkenhus1 map:', err);
   throw err;
 }));
-const Kåkenhus2 = lazy(() => import('./maps/Kåken2.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Kåkenhus2: LazySVGComponent = lazy(() => import('./maps/Kåken2.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Kåkenhus2 map:', err);
   throw err;
 }));
-const Kåkenhus3 = lazy(() => import('./maps/Kåken3.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Kåkenhus3: LazySVGComponent = lazy(() => import('./maps/Kåken3.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Kåkenhus3 map:', err);
   throw err;
 }));
-const Kåkenhus4 = lazy(() => import('./maps/Kåken4.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Kåkenhus4: LazySVGComponent = lazy(() => import('./maps/Kåken4.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Kåkenhus4 map:', err);
   throw err;
 }));
-const Kåkenhus5 = lazy(() => import('./maps/Kåken5.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
+const Kåkenhus5: LazySVGComponent = lazy(() => import('./maps/Kåken5.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Kåkenhus5 map:', err);
   throw err;
 }));
 
 // Floor configuration object to eliminate code duplication
-const FLOOR_CONFIGS = {
+const FLOOR_CONFIGS: Record<string, FloorConfig> = {
   [MAP_NAMES.TAPPAN_3]: { component: Täppan3, header: BUILDINGS.TAPPAN, floorCode: FLOOR_CODES.TP3 },
   [MAP_NAMES.TAPPAN_4]: { component: Täppan4, header: BUILDINGS.TAPPAN, floorCode: FLOOR_CODES.TP4 },
   [MAP_NAMES.TAPPAN_5]: { component: Täppan5, header: BUILDINGS.TAPPAN, floorCode: FLOOR_CODES.TP5 },
@@ -86,8 +95,8 @@ const FLOOR_CONFIGS = {
 };
 
 function LocationDetails(){
-    const {roomName} = useParams();
-    const containerRef = useRef(null);
+    const {roomName} = useParams<{roomName: string}>();
+    const containerRef = useRef<HTMLDivElement>(null);
 
     // React 18.3 useTransition: Marks floor changes as non-urgent
     // Keeps UI responsive during floor navigation
@@ -95,7 +104,7 @@ function LocationDetails(){
 
     // Memoize expensive room lookup to prevent recalculation on every render
     const room = useMemo(() => {
-        return elements.find(element => element.room === roomName);
+        return elements.find((element: RoomData) => element.room === roomName);
     }, [roomName]);
 
     // Om man tryckt på Täppan kommer våningarna för Täppan att visas, samma för Kåken
@@ -107,10 +116,10 @@ function LocationDetails(){
         startFloor = FLOOR_CODES.K2;
     }
 
-    const [currentFloor, setCurrentFloor] = useState(startFloor);
-    const [loading, setLoading] = useState(true);
+    const [currentFloor, setCurrentFloor] = useState<string>(startFloor);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    let mapName;
+    let mapName: string | undefined;
     if(room){
         mapName = room.building + room.floor;
     }
@@ -120,9 +129,9 @@ function LocationDetails(){
 
     useEffect(() => {
         const container = containerRef.current;
-        let element = null;
+        let element: Element | null = null;
 
-        if(room && container){
+        if(room && container && roomName){
             element = container.querySelector("#"+roomName);
             if(element){
                 element.classList.add("start_buildings");
@@ -147,11 +156,11 @@ function LocationDetails(){
 
     // Memoize event handler to prevent recreating on every render
     // Uses startTransition to mark floor changes as low-priority updates
-    const changeFloor = useCallback((floor) => {
+    const changeFloor = useCallback((floor: string) => {
         startTransition(() => {
             setCurrentFloor(floor);
         });
-    }, [startTransition]);
+    }, []);
 
     // Validering: Om rummet inte finns och det inte är en av specialfallen
     if(!room && roomName !== BUILDINGS.TAPPAN && roomName !== BUILDINGS.KAKENHUS){
@@ -207,7 +216,7 @@ function LocationDetails(){
                     </Suspense>
                 </SuspenseErrorBoundary>
             </div>
-            
+
             {mapName === MAP_NAMES.TAPPAN &&
             <>
 
@@ -286,7 +295,7 @@ function LocationDetails(){
                 </div>
             </>
             }
-            
+
             {mapName!==roomName && room &&
             <>
 

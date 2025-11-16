@@ -1,6 +1,7 @@
-import { BUILDINGS } from './constants.js';
+import { BUILDINGS } from './constants';
+import { RoomData } from './types';
 
-export const elements = [
+export const elements: RoomData[] = [
   { room: 'K1', building: BUILDINGS.KAKENHUS, floor: 2},
   { room: 'K2', building: BUILDINGS.KAKENHUS, floor: 2},
   { room: 'K3', building: BUILDINGS.KAKENHUS, floor: 2},

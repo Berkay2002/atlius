@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
+import { LocationInfoProps } from "./types";
 
-function LocationInfo(loc) {
+function LocationInfo(loc: LocationInfoProps) {
     return (
     <Link
       to={"/map/" + loc.data.room}

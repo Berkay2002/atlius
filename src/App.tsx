@@ -1,6 +1,6 @@
 import './App.css';
 import { HashRouter, Routes, Route} from "react-router-dom";
-import SearchRoom from './SearchRoom.js';
+import SearchRoom from './SearchRoom';
 import LocationDetails from './LocationDetails';
 import ErrorBoundary from './ErrorBoundary';
 import NotFound from './NotFound';

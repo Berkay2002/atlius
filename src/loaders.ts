@@ -18,7 +18,41 @@
  * 3. Use useLoaderData() hook in components to access loaded data
  */
 
-import { elements } from './DataBase.js';
+import { elements } from './DataBase';
+import { RoomData } from './types';
+
+interface LoaderParams {
+  params: {
+    roomName?: string;
+  };
+}
+
+interface LocationDetailsData {
+  room: RoomData | undefined;
+  roomName: string;
+  isBuilding: boolean;
+}
+
+interface SearchRoomData {
+  rooms: RoomData[];
+  buildings: string[];
+}
+
+interface BookingResult {
+  success: boolean;
+  booking: {
+    roomName: string | undefined;
+    time: string | null;
+    duration: string | null;
+  };
+}
+
+interface ActionParams {
+  params: {
+    roomName?: string;
+  };
+  request: Request;
+}
 
 /**
  * Loader for the LocationDetails route
@@ -39,17 +73,24 @@ import { elements } from './DataBase.js';
  *   errorElement: <RouteError />
  * }
  *
- * @param {Object} params - Route params from React Router
- * @returns {Object} Room data or throws 404 error
+ * @param params - Route params from React Router
+ * @returns Room data or throws 404 error
  */
-export async function locationDetailsLoader({ params }) {
+export async function locationDetailsLoader({ params }: LoaderParams): Promise<LocationDetailsData> {
   const { roomName } = params;
+
+  if (!roomName) {
+    throw new Response('Rum namn saknas', {
+      status: 400,
+      statusText: 'Rumnamn krävs'
+    });
+  }
 
   // Simulate API call delay (remove in production)
   // await new Promise(resolve => setTimeout(resolve, 100));
 
   // Find room in database
-  const room = elements.find(element => element.room === roomName);
+  const room = elements.find((element: RoomData) => element.room === roomName);
 
   // React Router v7 pattern: Throw Response for errors
   if (!room && roomName !== 'Täppan' && roomName !== 'Kåkenhus') {
@@ -75,9 +116,9 @@ export async function locationDetailsLoader({ params }) {
  * - Load building availability data
  * - Prefetch campus map data
  *
- * @returns {Object} All rooms and metadata
+ * @returns All rooms and metadata
  */
-export async function searchRoomLoader() {
+export async function searchRoomLoader(): Promise<SearchRoomData> {
   // In a real app, this might fetch from an API:
   // const response = await fetch('/api/rooms');
   // const rooms = await response.json();
@@ -132,15 +173,15 @@ export async function searchRoomLoader() {
  * React Router v7 also supports actions for handling form submissions
  * and mutations.
  *
- * @param {Object} request - Form data from submission
- * @returns {Object} Result of the action
+ * @param params - Route params and request data
+ * @returns Result of the action
  */
-export async function bookRoomAction({ params, request }) {
+export async function bookRoomAction({ params, request }: ActionParams): Promise<BookingResult> {
   const formData = await request.formData();
   const booking = {
     roomName: params.roomName,
-    time: formData.get('time'),
-    duration: formData.get('duration')
+    time: formData.get('time') as string | null,
+    duration: formData.get('duration') as string | null
   };
 
   // In a real app:

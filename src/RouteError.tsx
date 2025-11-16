@@ -1,6 +1,12 @@
-import React from 'react';
 import { Link, useRouteError } from 'react-router-dom';
 import {ReactComponent as Back} from './icons/back.svg';
+
+interface RouteErrorType {
+  status?: number;
+  statusText?: string;
+  message?: string;
+  stack?: string;
+}
 
 /**
  * React Router v7 feature: Route-level error handling with useRouteError
@@ -15,7 +21,7 @@ import {ReactComponent as Back} from './icons/back.svg';
  * - Can handle both synchronous and asynchronous errors
  */
 function RouteError() {
-  const error = useRouteError();
+  const error = useRouteError() as RouteErrorType;
 
   // Log error for debugging (in production, send to error tracking service)
   console.error('Route error:', error);
@@ -23,7 +29,7 @@ function RouteError() {
   // Determine error type and message
   let errorMessage = 'Ett oväntat fel har inträffat.';
   let errorTitle = 'Något gick fel';
-  let statusCode = null;
+  let statusCode: number | null = null;
 
   if (error?.status) {
     statusCode = error.status;
