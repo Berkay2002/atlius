@@ -102,6 +102,8 @@ export const elements = [
   {room: 'TP404', floor: 4, building: BUILDINGS.TAPPAN}
 ];
 
-export default {
+const roomData = {
     elements
-}
+};
+
+export default roomData;

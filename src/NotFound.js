@@ -5,7 +5,7 @@ import {ReactComponent as Back} from './icons/back.svg';
 function NotFound() {
   return (
     <div className="not-found-page">
-      <Link to="/">
+      <Link to="/" unstable_viewTransition>
         <div id="tillbakaKnapp">
           <Back/>
         </div>
@@ -15,7 +15,7 @@ function NotFound() {
         <h1 className="not-found-title">404</h1>
         <h2>Sidan hittades inte</h2>
         <p>Den sida du söker efter finns inte eller har flyttats.</p>
-        <Link to="/" className="not-found-link">
+        <Link to="/" className="not-found-link" unstable_viewTransition>
           <button className="not-found-button">Tillbaka till startsidan</button>
         </Link>
       </div>
