@@ -1,5 +1,5 @@
 import { Link, useRouteError } from 'react-router-dom';
-import {ReactComponent as Back} from './icons/back.svg';
+import { ReactComponent as Back } from './icons/back.svg';
 
 interface RouteErrorType {
   status?: number;

@@ -1,8 +1,8 @@
-import React from 'react';
+import { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorBoundaryProps, ErrorBoundaryState } from './types';
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };

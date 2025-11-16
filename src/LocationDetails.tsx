@@ -1,12 +1,12 @@
-import React, {useEffect, useState, useRef, useMemo, useCallback, lazy, Suspense, useTransition} from 'react';
-import {useParams} from "react-router-dom";
-import {elements} from './DataBase';
+import { Component, useEffect, useState, useRef, useMemo, useCallback, lazy, Suspense, useTransition } from 'react';
+import { useParams } from "react-router-dom";
+import { elements } from './DataBase';
 import { Link } from "react-router-dom";
 import { BUILDINGS, FLOOR_CODES, MAP_NAMES } from './constants';
 import { RoomData, LazySVGComponent, FloorConfig } from './types';
 
 // Keep small icons as regular imports
-import {ReactComponent as Back} from './icons/back.svg';
+import { ReactComponent as Back } from './icons/back.svg';
 
 interface SuspenseErrorBoundaryProps {
   children: React.ReactNode;
@@ -16,8 +16,8 @@ interface SuspenseErrorBoundaryState {
   hasError: boolean;
 }
 
-// React 18.3: Error boundary component for Suspense fallbacks
-class SuspenseErrorBoundary extends React.Component<SuspenseErrorBoundaryProps, SuspenseErrorBoundaryState> {
+// React 19: Error boundary component for Suspense fallbacks
+class SuspenseErrorBoundary extends Component<SuspenseErrorBoundaryProps, SuspenseErrorBoundaryState> {
   constructor(props: SuspenseErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -48,7 +48,7 @@ class SuspenseErrorBoundary extends React.Component<SuspenseErrorBoundaryProps, 
 }
 
 // Lazy load SVG floor plans for better performance
-// React 18.3: Enhanced error handling for lazy imports
+// React 19: Enhanced error handling for lazy imports
 const Täppan3: LazySVGComponent = lazy(() => import('./maps/Täppan3.svg').then(module => ({ default: module.ReactComponent })).catch(err => {
   console.error('Failed to load Täppan3 map:', err);
   throw err;
@@ -98,7 +98,7 @@ function LocationDetails(){
     const {roomName} = useParams<{roomName: string}>();
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // React 18.3 useTransition: Marks floor changes as non-urgent
+    // React 19 useTransition: Marks floor changes as non-urgent
     // Keeps UI responsive during floor navigation
     const [isPending, startTransition] = useTransition();
 
@@ -197,7 +197,7 @@ function LocationDetails(){
             )}
 
             {/* Render floor plans using configuration object with lazy loading */}
-            {/* React 18.3: Enhanced Suspense with error boundary and transition support */}
+            {/* React 19: Enhanced Suspense with error boundary and transition support */}
             {/* isPending provides visual feedback during transitions */}
             <div style={{ opacity: isPending ? 0.6 : 1, transition: 'opacity 0.3s ease' }}>
                 <SuspenseErrorBoundary>
@@ -207,10 +207,10 @@ function LocationDetails(){
                             const shouldRender = mapName === configMapName || currentFloor === config.floorCode;
 
                             return shouldRender ? (
-                                <React.Fragment key={configMapName}>
+                                <div key={configMapName}>
                                     <h1 id="headerRoom">{config.header}</h1>
                                     <FloorComponent />
-                                </React.Fragment>
+                                </div>
                             ) : null;
                         })}
                     </Suspense>
