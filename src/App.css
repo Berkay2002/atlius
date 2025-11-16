@@ -1,3 +1,18 @@
+/* CSS Variables for consistent theming */
+:root {
+  --primary-color: var(--primary-color);
+  --primary-dark: #0085a6;
+  --bg-even: #D9D9D9;
+  --bg-odd: #b8b8b8;
+  --text-gray: #666;
+  --border-gray: #ddd;
+  --bg-light: #f5f5f5;
+  --bg-lighter: #f0f0f0;
+  --bg-lightest: #f0f9fc;
+  --white: white;
+  --black: black;
+}
+
 .App {
   text-align: center;
 
@@ -7,28 +22,36 @@
 /* New stuff*/
 a {
   text-decoration: none;
-  color: black;
+  color: var(--black);
 }
 
 #headerRoom {
   position:absolute;
   width: 100%;
   text-align: center;
-  z-index: -1;
+  z-index: 1;
 
 }
 .details{
   height: 100vh;
 }
 a:nth-child(even) .room{
-  background-color: #D9D9D9 ;
+  background-color: var(--bg-even) ;
   margin:auto;
-  height: 30px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 a:nth-child(odd) .room{
-  background-color: #c1c1c1 ;
+  background-color: var(--bg-odd) ;
   margin:auto;
-  height: 30px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .room h1 {
   font-size: 5vw;
@@ -38,14 +61,28 @@ a:nth-child(odd) .room{
   margin:0;
   width: 100%;
 }
+
+a:hover .room {
+  background-color: var(--primary-color);
+  transform: scale(1.02);
+}
+
+a:hover .roomTitle {
+  color: var(--white);
+}
 .searchResults {
   position: absolute;
-  left: 0; 
-  right: 0; 
+  left: 0;
+  right: 0;
   margin: auto;
-  width: 50%;
+  width: clamp(300px, 50vw, 800px);
   margin-top: 5vh;
-  border:2px solid black;
+  border:2px solid var(--black);
+  animation: fadeIn 0.3s ease-in;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--white);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 svg {
@@ -58,6 +95,8 @@ svg {
   width: 95%;
   margin-left: 2%;
   margin-right: auto;
+  animation: fadeIn 0.5s ease-in;
+  transition: opacity 0.3s ease;
 }
 
 
@@ -76,26 +115,40 @@ svg {
 }
 
 #input {
-    font-size: 4vw;
+    font-size: clamp(14px, 4vw, 24px);
     width: 100%;
-    height: 30px;
+    min-height: 44px;
     padding: 0;
     border: 0;
     font-family: 'Segoe UI';
     text-align: center;
+    transition: background-color 0.3s ease;
 }
 
 #input:focus {
     outline: none;
-    
+    background-color: var(--bg-lightest);
 }
 #tillbakaKnapp {
-    color: black;
-    background-color: #00B3E1;
+    color: var(--black);
+    background-color: var(--primary-color);
+    min-height: 44px;
     height: 10vh;
-    width: 16.5vw;
+    width: clamp(80px, 16.5vw, 150px);
     position: absolute;
     top: 0%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: none;
+}
+
+#tillbakaKnapp:hover {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+#tillbakaKnapp:active {
+    transform: scale(0.98);
 }
 
 /*Våningsknapparna på /map/ */
@@ -103,6 +156,9 @@ svg {
   position: absolute;
   bottom: 0%;
   width: 100vw;
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
 }
 
 
@@ -117,7 +173,7 @@ body [style*="fill: rgb(0, 179, 225);"] {
 }
 
 .start_buildings {
-  fill: #00B3E1 !important;
+  fill: var(--primary-color) !important;
   animation: fade_a 2s;
   animation-iteration-count: 5;
   animation-direction: alternate;
@@ -132,7 +188,7 @@ body [style*="fill: rgb(0, 179, 225);"] {
   }
 }
 
-@keyframes fade_b { 
+@keyframes fade_b {
   0% {
     opacity: 0;
   }
@@ -141,20 +197,43 @@ body [style*="fill: rgb(0, 179, 225);"] {
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /*skapa css variabel*/
 
 #floorContainer button{
-  float:left;
   margin:0%;
+  min-height: 44px;
   height:10vh;
-  background-color: #00B3E1;
-  color: white;
-  border: 1px solid white;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: 1px solid var(--white);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: clamp(14px, 3vw, 20px);
+}
+
+#floorContainer button:hover{
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 #floorContainer button:focus{
-  background-color: #0085a6;
+  background-color: var(--primary-dark);
   outline: none;
+}
+
+#floorContainer button:active{
+  transform: translateY(0);
 }
 
 #floorContainer button:nth-child(-n+3){
@@ -163,4 +242,260 @@ body [style*="fill: rgb(0, 179, 225);"] {
 
 #floorContainer button:nth-child(n+4){
   width: 50vw;
+}
+
+/* Error page styles */
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+}
+
+.error-content {
+  max-width: 600px;
+  padding: 40px 20px;
+}
+
+.error-content h1 {
+  color: var(--primary-color);
+  font-size: 8vw;
+  margin-bottom: 20px;
+}
+
+.error-content h2 {
+  font-size: 6vw;
+  margin-bottom: 15px;
+}
+
+.error-content p {
+  font-size: 4vw;
+  margin-bottom: 30px;
+  color: var(--text-gray);
+}
+
+.error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.error-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  padding: 15px 30px;
+  font-size: 4vw;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  min-width: 200px;
+}
+
+.error-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.error-button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.error-link {
+  text-decoration: none;
+}
+
+.error-details {
+  margin-top: 30px;
+  text-align: left;
+  background-color: var(--bg-light);
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid var(--border-gray);
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.error-details pre {
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* 404 Not Found page styles */
+.not-found-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.not-found-content {
+  max-width: 600px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.not-found-title {
+  color: var(--primary-color);
+  font-size: 20vw;
+  margin: 0;
+  line-height: 1;
+}
+
+.not-found-content h2 {
+  font-size: 6vw;
+  margin: 20px 0 15px 0;
+}
+
+.not-found-content p {
+  font-size: 4vw;
+  margin-bottom: 30px;
+  color: var(--text-gray);
+}
+
+.not-found-link {
+  text-decoration: none;
+}
+
+.not-found-button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  padding: 15px 30px;
+  font-size: 4vw;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.not-found-button:hover {
+  background-color: var(--primary-dark);
+}
+
+.not-found-button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Empty state and more results styles */
+.emptyState, .moreResults {
+  padding: 15px;
+  text-align: center;
+  color: var(--text-gray);
+  font-style: italic;
+}
+
+.emptyState p, .moreResults p {
+  margin: 0;
+  font-size: 3.5vw;
+}
+
+.moreResults {
+  background-color: var(--bg-lighter);
+  color: var(--primary-color);
+}
+
+/* Active floor indicator */
+#floorContainer button.activeFloor {
+  background-color: var(--primary-dark);
+  font-weight: bold;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading indicator */
+.loadingIndicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in;
+}
+
+.loadingIndicator p {
+  color: var(--primary-color);
+  font-size: 4vw;
+  margin: 0;
+  font-weight: bold;
+}
+
+/* Media query for small screens */
+@media screen and (max-width: 600px) {
+  .room h1 {
+    font-size: 6vw;
+  }
+
+  #input {
+    font-size: 5vw;
+    min-height: 48px;
+  }
+
+  .searchResults {
+    width: clamp(280px, 90vw, 800px);
+    margin-top: 3vh;
+  }
+
+  #tillbakaKnapp {
+    width: 20vw;
+    min-width: 70px;
+  }
+
+  #floorContainer button {
+    font-size: 4vw;
+    min-height: 48px;
+  }
+
+  .error-content h1,
+  .not-found-title {
+    font-size: 15vw;
+  }
+
+  .error-content h2,
+  .not-found-content h2 {
+    font-size: 7vw;
+  }
+
+  .error-content p,
+  .not-found-content p {
+    font-size: 5vw;
+  }
+
+  .error-button,
+  .not-found-button {
+    font-size: 5vw;
+    padding: 12px 24px;
+    min-width: 180px;
+  }
+}
+
+/* Media query for very small screens */
+@media screen and (max-width: 400px) {
+  .searchResults {
+    width: 95vw;
+  }
+
+  #description h1 {
+    font-size: 6vw;
+  }
+
+  #description h2 {
+    font-size: 5vw;
+  }
 }
