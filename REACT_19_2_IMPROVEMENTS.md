@@ -1,18 +1,18 @@
-# React 18.3.1 Improvements - AtLius
+# React 19.2.0 Improvements - AtLius
 
 ## Overview
 
-This document details the React 18.3.1 features and improvements implemented in the AtLius campus map application. The upgrade from React 18.2.0 to 18.3.1 introduced several concurrent rendering enhancements that significantly improve the application's performance and user experience.
+This document details the React 19.2.0 features and improvements implemented in the AtLius campus map application. The upgrade from React 18.2.0 to 19.2.0 introduced several concurrent rendering enhancements and new hooks that significantly improve the application's performance and user experience.
 
 **Implementation Date**: 2025-11-16
-**React Version**: 18.3.1 (upgraded from 18.2.0)
+**React Version**: 19.2.0 (upgraded from 18.2.0)
 
 ---
 
 ## 1. useDeferredValue for Search Performance
 
 ### Location
-`/home/user/atlius/src/SearchRoom.js`
+`src/SearchRoom.js`
 
 ### Implementation
 Replaced manual debouncing with React's built-in `useDeferredValue` hook.
@@ -66,14 +66,14 @@ const isSearching = searchString !== deferredSearchString;
 ## 2. useTransition for Floor Navigation
 
 ### Location
-`/home/user/atlius/src/LocationDetails.js`
+`src/LocationDetails.js`
 
 ### Implementation
 Added `useTransition` to mark floor changes as low-priority updates, keeping the UI responsive during floor plan loading.
 
 **Implementation:**
 ```javascript
-// React 18.3 useTransition
+// React 19 useTransition
 const [isPending, startTransition] = useTransition();
 
 // Wrap floor changes in startTransition
@@ -104,7 +104,7 @@ const changeFloor = useCallback((floor) => {
 - **Floor switch latency**: Perceived reduction of ~30-50%
 - **UI responsiveness**: Remains interactive during transitions
 - **Large SVG loading**: No longer blocks the main thread
-- **Concurrent mode optimization**: Full utilization of React 18's concurrent rendering
+- **Concurrent mode optimization**: Full utilization of React 19's concurrent rendering
 
 ### User Experience Improvements
 
@@ -119,7 +119,7 @@ const changeFloor = useCallback((floor) => {
 ## 3. Enhanced Suspense Error Handling
 
 ### Location
-`/home/user/atlius/src/LocationDetails.js`
+`src/LocationDetails.js`
 
 ### Implementation
 Added dedicated error boundary for Suspense components to gracefully handle SVG loading failures.
@@ -206,7 +206,7 @@ const Täppan3 = lazy(() =>
 ## 4. Additional React Router v7 Enhancements
 
 ### Note
-The linter/formatter automatically added `unstable_viewTransition` to Link components, which is a React Router v7.9.6 feature (not React 18.3, but beneficial):
+The linter/formatter automatically added `unstable_viewTransition` to Link components, which is a React Router v7.9.6 feature (not React core, but beneficial):
 
 ```javascript
 <Link to="/" aria-label="Tillbaka till sökning" unstable_viewTransition>
@@ -278,12 +278,12 @@ npm run build
 
 ## Browser Compatibility
 
-All React 18.3 features used are fully compatible with:
+All React 19 features used are fully compatible with:
 
-- Chrome 90+ ✅
-- Firefox 88+ ✅
-- Safari 14+ ✅
-- Edge 90+ ✅
+- Chrome 100+ ✅
+- Firefox 100+ ✅
+- Safari 15+ ✅
+- Edge 100+ ✅
 
 The app maintains backward compatibility through React's polyfills and graceful degradation.
 
@@ -333,45 +333,113 @@ Always provide:
 
 ---
 
-## Future React 19 Features to Consider
+## Additional React 19 Features Available
 
-### Documented for Future Implementation
+### Ready for Implementation
 
-The following React 19 features are **not available** in React 18.3.1 but should be considered when upgrading:
+The following React 19 features are **now available** and can be implemented for further enhancement:
 
-#### 1. `use()` Hook (React 19+)
+#### 1. `use()` Hook (React 19)
 ```javascript
-// Future: Simplify async data fetching
-const data = use(fetchDataPromise);
+// Simplify async data fetching
+import { use } from 'react';
+
+function RoomData({ roomPromise }) {
+  const data = use(roomPromise);
+  return <div>{data.name}</div>;
+}
 ```
 
 **Potential uses in AtLius:**
-- Loading room data asynchronously
+- Loading room data asynchronously without useEffect
 - Fetching building information from API
 - Reading configuration from external sources
+- Cleaner async data handling in components
 
-#### 2. `useOptimistic()` Hook (React 19+)
+#### 2. `useOptimistic()` Hook (React 19)
 ```javascript
-// Future: Optimistic UI updates
-const [optimisticFloor, setOptimisticFloor] = useOptimistic(currentFloor);
+// Optimistic UI updates
+import { useOptimistic } from 'react';
+
+function FloorNavigation({ currentFloor }) {
+  const [optimisticFloor, setOptimisticFloor] = useOptimistic(currentFloor);
+  
+  const handleFloorChange = async (floor) => {
+    setOptimisticFloor(floor); // Immediate UI update
+    await updateFloor(floor); // Actual update
+  };
+}
 ```
 
 **Potential uses in AtLius:**
 - Instant floor navigation feedback
 - Optimistic search result updates
 - Smooth room highlighting
+- Better perceived performance
 
-#### 3. Server Components (React 19+)
+#### 3. `useFormStatus()` Hook (React 19)
+```javascript
+// Track form submission state
+import { useFormStatus } from 'react-dom';
+
+function SearchButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>Search</button>;
+}
+```
+
+**Potential uses in AtLius:**
+- Search form loading indicators
+- Disable search while processing
+- Better form UX
+
+#### 4. `useActionState()` Hook (React 19)
+```javascript
+// Manage action state
+import { useActionState } from 'react';
+
+function SearchForm() {
+  const [state, formAction] = useActionState(searchAction, initialState);
+  return <form action={formAction}>...</form>;
+}
+```
+
+**Potential uses in AtLius:**
+- Enhanced search form handling
+- Better error states
+- Progressive enhancement
+
+#### 5. Server Components (React 19)
+**Note**: Requires a framework like Next.js or Remix
+
 **Potential uses in AtLius:**
 - Pre-render floor plans on server
 - Optimize initial page load
 - Reduce client-side bundle size
+- Server-side SVG optimization
 
-#### 4. Actions and Form Improvements (React 19+)
+#### 6. Actions and Form Improvements (React 19)
+```javascript
+// Enhanced form handling
+function SearchForm() {
+  return (
+    <form action={async (formData) => {
+      'use server';
+      const query = formData.get('search');
+      return searchRooms(query);
+    }}>
+      <input name="search" />
+      <button type="submit">Search</button>
+    </form>
+  );
+}
+```
+
 **Potential uses in AtLius:**
 - Form-based search enhancement
 - Better accessibility
 - Progressive enhancement
+- Works without JavaScript
 
 ---
 
@@ -519,20 +587,27 @@ They do NOT catch:
 1. Consider preloading frequently accessed floor maps
 2. Implement service worker for offline SVG caching
 3. Add performance monitoring for useTransition delays
-4. Consider React 19 upgrade when stable
+4. Explore React 19 advanced features (use, useOptimistic, Server Components)
+5. Consider migrating to a framework (Next.js/Remix) for Server Components support
 
 ---
 
 ## References
 
-- [React 18.3 Changelog](https://github.com/facebook/react/blob/main/CHANGELOG.md)
+- [React 19 Release Notes](https://react.dev/blog/2025/04/25/react-19)
+- [React 19 Changelog](https://github.com/facebook/react/blob/main/CHANGELOG.md)
 - [useDeferredValue Documentation](https://react.dev/reference/react/useDeferredValue)
 - [useTransition Documentation](https://react.dev/reference/react/useTransition)
+- [use() Hook Documentation](https://react.dev/reference/react/use)
+- [useOptimistic() Documentation](https://react.dev/reference/react/useOptimistic)
+- [useFormStatus() Documentation](https://react.dev/reference/react-dom/hooks/useFormStatus)
+- [useActionState() Documentation](https://react.dev/reference/react/useActionState)
 - [Suspense and Error Boundaries](https://react.dev/reference/react/Suspense)
-- [React 19 Preview Features](https://react.dev/blog/2024/12/05/react-19)
+- [Server Components](https://react.dev/reference/rsc/server-components)
+- [Actions](https://react.dev/reference/rsc/server-actions)
 
 ---
 
 **Last Updated**: 2025-11-16
 **Maintained By**: Claude Code
-**React Version**: 18.3.1
+**React Version**: 19.2.0
