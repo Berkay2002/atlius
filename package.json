@@ -6,8 +6,8 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6",
     "react-scripts": "5.0.1",
     "web-vitals": "^5.1.0"
@@ -45,5 +45,11 @@
     "@types/react-dom": "^19.2.3",
     "@types/react-router-dom": "^5.3.3",
     "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "nth-check": "^2.1.1",
+    "postcss": "^8.5.6",
+    "js-yaml": "^4.1.1",
+    "webpack-dev-server": "^5.2.2"
   }
 }
